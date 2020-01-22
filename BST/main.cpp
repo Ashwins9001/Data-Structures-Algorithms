@@ -15,5 +15,8 @@ int main(int argc, char* argv[]) {
 	}
 	cout << "Printing the tree in order after adding numbers " << endl;
 	myTree.printInOrder();
+
+	myTree.printChildren(myTree.returnRootKey());
+	cout << myTree.findSmallest() << endl;
 	cin >> c;
 }

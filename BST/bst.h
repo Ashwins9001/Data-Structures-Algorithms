@@ -46,6 +46,38 @@ private:
 		else
 			cout << "Tree is empty" << endl;
 	}
+	node* returnNodePrivate(int dataIn, node* Ptr)
+	{
+		if (Ptr != NULL)
+		{
+			if (Ptr->data == dataIn)
+				return Ptr;
+			else
+			{
+				if (dataIn < Ptr->data)
+					returnNodePrivate(dataIn, Ptr->left);
+				else if (dataIn > Ptr->data)
+					returnNodePrivate(dataIn, Ptr->right);
+			}
+		}
+		else
+			return NULL;
+	}
+	int findSmallestPrivate(node* Ptr)
+	{
+		if (root == NULL)
+		{
+			cout << "Tree is empty " << endl; return -1;
+		}
+		else
+		{
+			if (Ptr->left != NULL)
+				return findSmallestPrivate(Ptr->left);
+			else
+				return Ptr->data;
+		}
+			
+	}
 public:
 	BST(){root = NULL;}
 	node* CreateLeaf(int dataIn) 
@@ -65,5 +97,37 @@ public:
 	void printInOrder()
 	{
 		printInOrderPrivate(root);
+	}
+	node* returnNode(int dataIn) //return a node pointer which can be referenced from private var as input to func 
+	{
+		return returnNodePrivate(dataIn, root);
+	}
+	int returnRootKey()
+	{
+		if (root != NULL)
+			return root->data;
+		else
+			return -1000;
+	}
+	void printChildren(int dataIn)
+	{
+		node* Ptr = returnNode(dataIn); //returns pointer to node containing data/key
+		if (Ptr != NULL)
+		{
+			cout << "Parent node is " << Ptr->data << endl;
+			//print out children of node with matching data 
+			Ptr->left == NULL ?
+				cout << "left child = NULL " << endl :
+				cout << "left child = " << Ptr->left->data << endl;
+			Ptr->right == NULL ?
+				cout << "right child = NULL " << endl :
+				cout << "right child = " << Ptr->right->data << endl;
+		}
+		else
+			cout << "Data is " << dataIn << " is not in tree" << endl;
+	}
+	int findSmallest()
+	{
+		return findSmallestPrivate(root);
 	}
 };
