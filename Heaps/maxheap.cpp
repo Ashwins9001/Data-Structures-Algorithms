@@ -40,7 +40,7 @@ public:
 			heap[0] = heap[size - 1];
 			size--;
 			//after swap, call heapify to maintain heap invariant
-			heapify(0);
+			heapifyRoot(0);
 			return root;
 		}
 		
@@ -53,20 +53,14 @@ public:
 			return;
 		}
 		size++;
+		//insert a node at the end 
 		int i = size - 1;
 		heap[i] = k;
-		
-		while (i != 0 && heap[parent(i)] < heap[i])
-		{
-			//swap vector elements to reorder heap
-			swap(heap[i], heap[parent(i)]);
-			//want to track i after swap, set it equal to parent node and repeat 
-			//continuously "bubbles up" till it reaches lowest point of heap: root (i = 0)
-			i = parent(i);
-		}
+		heapifyUp(i);
 	}
 	//recursive function to maintain structure after root removal (polling operation)
-	void heapify(int i)
+	//sorts root node (refers to children)
+	void heapifyRoot(int i)
 	{
 		//get indices of left, right children of node i
 		//heapify called at root in getMin(), set that to smallest index for now
@@ -85,8 +79,35 @@ public:
 		if (largest != i)
 		{
 			swap(heap[i], heap[largest]);
-			heapify(largest);
+			heapifyRoot(largest);
 		}
+	}
+	//sorts any node of tree that is not the root (referes to parent for swap)
+	void heapifyUp(int index)
+	{
+		while (index != 0 && heap[parent(index)] < heap[index])
+		{
+			//swap vector elements to reorder heap
+			swap(heap[index], heap[parent(index)]);
+			//want to track i after swap, set it equal to parent node and repeat 
+			//continuously "bubbles up" till it reaches lowest point of heap: root (i = 0)
+			index = parent(index);
+		}
+	}
+	//enter value in heap to be removed
+	void removeElement(int i)
+	{
+		int j;
+		for (j = 0; j < size; j++)
+		{
+			if (heap[j] == i)
+				break;
+		}
+		cout << "Swapping element at index " << j << " of value " << heap[j] << " with " << heap[size - 1] << endl;
+		swap(heap[j], heap[size - 1]);
+		size--;
+		heapifyUp(j);
+		//size--;
 	}
 	void printHeap()
 	{
@@ -115,14 +136,19 @@ public:
 int main() {
 	Minheap heap(15);
 	char c;
+	int j = 0;
 	for (int i = 0; i < 15; i++)
 	{
+		j = j + 5;
 		cout << "Inserting element at " << i + 1 << endl;
-		heap.insert(rand() % 100);
+		heap.insert(j);
 		heap.printHeap();
 		cout << endl;
 	}
 	int max;
+	heap.removeElement(5);
+	heap.printHeap();
+	cout << endl;
 	max = heap.getMax();
 	cout << "Max " << max << endl;
 	cin >> c;
