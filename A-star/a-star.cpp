@@ -68,6 +68,26 @@ protected: //inaccessible outside of class, but available to derived members
 				nodes[y * nMapWidth + x].bVisited = false;
 			}
 		}
+
+		//Configure connections at each node by populating neighbors vector 
+		for (int x = 0; x < nMapWidth; x++)
+		{
+			for (int y = 0; y < nMapHeight; y++)
+			{
+				//ref node via ptr, grab its neighbors from adj_list, pass pointer to another node which is above, add to neighbors vec
+				//address passed in push_back as vecNeighbors of type sNode pointers
+				//vector pointers used to maintain track specific nodes, no matter operation, ref exists
+				if (y > 0) //ensure not checking top row, nothing exists above, error caused
+					nodes[y * nMapWidth + x].vecNeighbors.push_back(&nodes[(y - 1) * nMapWidth + (x + 0)]);
+				if (y < nMapHeight - 1) //add below, ensure not bot row
+					nodes[y * nMapWidth + x].vecNeighbors.push_back(&nodes[(y + 1) * nMapWidth + (x + 0)]);
+				if (x > 0) //add left, ensure not leftmost row
+					nodes[y * nMapWidth + x].vecNeighbors.push_back(&nodes[(y + 0) * nMapWidth + (x - 1)]);
+				if (x < nMapWidth - 1) //add right, ensure not rightmost row 
+					nodes[y * nMapWidth + x].vecNeighbors.push_back(&nodes[(y + 0) * nMapWidth + (x + 1)]);
+			}
+		}
+			
 		return true;
 	}
 
@@ -79,6 +99,24 @@ protected: //inaccessible outside of class, but available to derived members
 		//L before string indicates wide-character (larger 16-bit encoding vs typical 8-bit)
 		//Fill via header, params: (x1, y1, x2, y2, val)
 		Fill(0, 0, ScreenWidth(), ScreenHeight(), L' ');
+
+		//Draw connections
+		for (int x = 0; x < nMapWidth; x++)
+			for (int y = 0; y < nMapHeight; y++)
+			{
+				//Iterate through adj_list per node for neighbors, note iterators are pointer-like
+				//Used to go through contents of STL containers 
+				//n will assume type of vector (*sNode) iterate through, access pointers inside vec, deref for obj
+				//note iterator methods such as .begin() return an address, MUST deref for obj access
+				for (auto n : nodes[y*nMapWidth + x].vecNeighbors)
+				{
+					//params (x1, y1, x2, y2, color)
+					//x1, y1 go to center of each node, x2, y2 go to neigbors' centers 
+					DrawLine(x*nNodeSize + nNodeSize / 2, y*nNodeSize + nNodeSize / 2,
+						n->x*nNodeSize + nNodeSize / 2, n->y*nNodeSize + nNodeSize / 2, PIXEL_SOLID, FG_DARK_BLUE);
+				}
+			}
+
 
 		for (int x = 0; x < nMapWidth; x++)
 		{
@@ -97,7 +135,7 @@ int main()
 {
 	PathFinding path;
 	//160 x 160 chars, each occupies a size of 6 pixels 
-	path.ConstructConsole(240, 240, 3, 3);
+	path.ConstructConsole(260, 260, 3, 3);
 	path.Start();
 	return 0;
 }
