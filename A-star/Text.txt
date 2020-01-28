@@ -1,0 +1,15 @@
+Layout a grid contained in 1D array, with each element
+containing characters, apply Draw(x,y) to make it.
+Reference an element via y * screenWidth() + x
+(for some element at column x, row y),
+screenWidth() is integer amt of elements across.
+Each char is UNICODE, 16-bit encoding
+Workflow:
+1. Define characters then pixel size construct console
+2. Create/load resources, thread to run engine which calls onUserCreate()
+3. Enter game loop which updates timing information (fElapsedTime), length of previous frame
+Game loop must be adjusted for varying CPU loads which can lead to change in framerate
+either due to updating more or less. Consider formula D = VT, here fElapsedTime (T) constant,
+distance travelled is also maintained, thus if CPU load changes then V is affected.
+4. Update input - checks user input, filling array m_keys[].bReleased().. and ref via virtual keys.
+5. Call onUserUpdate(fElapsedTime) -> update game state and screen, if returns true it goes back to game loop
